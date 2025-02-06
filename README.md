@@ -1,17 +1,12 @@
-                                                                       # Low-Level-Design
-_____________________________________________________________________________________________________________________________________________________________________________________________________________
-
 # SOLID Principles
 
-The SOLID principles are a set of five design principles intended to make software designs more understandable, flexible, and maintainable.
-They were introduced by Robert C. Martin (Uncle Bob). 
+The SOLID principles are a set of five design principles intended to make software designs more understandable, flexible, and maintainable. They were introduced by Robert C. Martin (Uncle Bob).
 
-- 1. Single Responsibility Principle (SRP)
+## 1. Single Responsibility Principle (SRP)
 A class should have only one reason to change, meaning it should have only one job or responsibility.
 
-- Example:
-
-     // Violation of SRP
+### Violation of SRP:
+```java
 class Report {
     public void generateReport() {
         // Generate report logic
@@ -21,8 +16,10 @@ class Report {
         // Save report to file logic
     }
 }
+```
 
-// Adhering to SRP
+### Adhering to SRP:
+```java
 class Report {
     public void generateReport() {
         // Generate report logic
@@ -34,21 +31,23 @@ class ReportSaver {
         // Save report to file logic
     }
 }
-- Class Diagram:
+```
+
+### Class Diagram:
+```
 +-----------------+       +-----------------+
 |     Report      |       |   ReportSaver   |
 +-----------------+       +-----------------+
 | +generateReport()|       | +saveToFile()   |
 +-----------------+       +-----------------+
+```
+---
 
-______________________________________________________________________________________________________________________________________________________________________
-
-2. Open/Closed Principle (OCP)
+## 2. Open/Closed Principle (OCP)
 Software entities (classes, modules, functions) should be open for extension but closed for modification.
 
-Example:
-
-    // Violation of OCP
+### Violation of OCP:
+```java
 class Rectangle {
     public double width;
     public double height;
@@ -59,8 +58,10 @@ class AreaCalculator {
         return rectangle.width * rectangle.height;
     }
 }
+```
 
-// Adhering to OCP
+### Adhering to OCP:
+```java
 interface Shape {
     double calculateArea();
 }
@@ -83,8 +84,10 @@ class Circle implements Shape {
         return Math.PI * radius * radius;
     }
 }
+```
 
-- Class Diagram:
+### Class Diagram:
+```
 +-----------------+       +-----------------+
 |     Shape       |       |   Rectangle     |
 +-----------------+       +-----------------+
@@ -97,14 +100,14 @@ class Circle implements Shape {
                         +-----------------+
                         | +calculateArea()|
                         +-----------------+
+```
+---
 
-_____________________________________________________________________________________________________________________________________________________________________________________________________________________
-
-3. Liskov Substitution Principle (LSP)
+## 3. Liskov Substitution Principle (LSP)
 Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program.
 
-Example:
-          // Violation of LSP
+### Violation of LSP:
+```java
 class Bird {
     public void fly() {
         System.out.println("Flying");
@@ -117,8 +120,10 @@ class Ostrich extends Bird {
         throw new UnsupportedOperationException("Ostrich cannot fly");
     }
 }
+```
 
-// Adhering to LSP
+### Adhering to LSP:
+```java
 interface Bird {
     void move();
 }
@@ -136,10 +141,10 @@ class Ostrich implements Bird {
         System.out.println("Running");
     }
 }
+```
 
-
-- Class Diagram:
- 
+### Class Diagram:
+```
 +-----------------+       +-----------------+
 |      Bird       |       |     Sparrow     |
 +-----------------+       +-----------------+
@@ -152,13 +157,14 @@ class Ostrich implements Bird {
                         +-----------------+
                         | +move()         |
                         +-----------------+
-_______________________________________________________________________________________________________________________________________________________________________________________________________________
-4. Interface Segregation Principle (ISP)
+```
+---
+
+## 4. Interface Segregation Principle (ISP)
 Clients should not be forced to depend on interfaces they do not use.
 
-Example:
-
-     // Violation of ISP
+### Violation of ISP:
+```java
 interface Worker {
     void work();
     void eat();
@@ -187,8 +193,10 @@ class RobotWorker implements Worker {
         throw new UnsupportedOperationException("Robot cannot eat");
     }
 }
+```
 
-// Adhering to ISP
+### Adhering to ISP:
+```java
 interface Workable {
     void work();
 }
@@ -215,30 +223,30 @@ class RobotWorker implements Workable {
         System.out.println("Working");
     }
 }
+```
 
-
-- Class Diagram:
-
+### Class Diagram:
+```
 +-----------------+       +-----------------+       +-----------------+
 |   Workable      |       |   Eatable       |       |  HumanWorker    |
 +-----------------+       +-----------------+       +-----------------+
 | +work()         |       | +eat()          |<------| +work()         |
 +-----------------+       +-----------------+       | +eat()          |
         ^                                           +-----------------+
-        |                                                   ^
-        |                                                   |
-+-----------------+                                         |
-|  RobotWorker    |                                         |
-+-----------------+                                         |
-| +work()         |                                         |
-+-----------------+                                         |
+        |
++-----------------+
+|  RobotWorker    |
++-----------------+
+| +work()         |
++-----------------+
+```
+---
 
-__________________________________________________________________________________________________________________________________________________________________________________________
-5. Dependency Inversion Principle (DIP)
+## 5. Dependency Inversion Principle (DIP)
 High-level modules should not depend on low-level modules. Both should depend on abstractions.
 
-Example:  
-         // Violation of DIP
+### Violation of DIP:
+```java
 class LightBulb {
     public void turnOn() {
         System.out.println("LightBulb: On");
@@ -260,8 +268,10 @@ class Switch {
         bulb.turnOn();
     }
 }
+```
 
-// Adhering to DIP
+### Adhering to DIP:
+```java
 interface Switchable {
     void turnOn();
     void turnOff();
@@ -290,11 +300,3 @@ class Switch {
         device.turnOn();
     }
 }
-
-- Class Diagram:
-             +-----------------+       +-----------------+       +-----------------+
-|  Switchable     |       |   LightBulb     |       |     Switch      |
-+-----------------+       +-----------------+       +-----------------+
-| +turnOn()       |<------| +turnOn()       |       | +operate()      |
-| +turnOff()      |       | +turnOff()      |<------|                 |
-+-----------------+       +-----------------+       +-----------------+
