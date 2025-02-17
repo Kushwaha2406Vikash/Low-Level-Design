@@ -458,18 +458,18 @@ public class FacadePatternExample {
 ```
 
 #### Output
-Get ready to watch a movie...
-DVD Player is On.
-DVD Player is Playing.
-Projector is On.
-Projector brightness set to high.
-Sound System is On.
-Sound System volume set to max.
+- Get ready to watch a movie...
+- DVD Player is On.
+- DVD Player is Playing.
+- Projector is On.
+- Projector brightness set to high.
+- Sound System is On.
+- Sound System volume set to max.
 
-Shutting down the home theater...
-DVD Player is Off.
-Projector is Off.
-Sound System is Off.
+- Shutting down the home theater...
+- DVD Player is Off.
+- Projector is Off.
+ - Sound System is Off.
 
 
 ### When to Use the Facade Pattern?
