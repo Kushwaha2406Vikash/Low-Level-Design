@@ -476,3 +476,200 @@ public class FacadePatternExample {
 - When you want to simplify interactions with a complex subsystem.
 - When you want to provide a unified interface to a set of interfaces in a subsystem.
 - When you want to hide the complexities of the subsystem and provide a higher-level abstraction.
+
+# Design Patterns: Flyweight and Proxy
+
+## Flyweight Pattern
+
+### Overview
+The **Flyweight Pattern** is a structural design pattern that reduces memory usage by sharing common objects instead of creating new ones for every instance. It is useful when an application needs to create a large number of similar objects.
+
+### Use Case
+Imagine a text editor where each character in a document is an object. Without optimization, creating a new object for each character would consume a lot of memory. Using the Flyweight Pattern, we can reuse character objects instead of creating new ones, significantly improving efficiency.
+
+### Class Diagram
+```
+           ┌───────────────────┐
+           │   Flyweight       │  (Interface for shared objects)
+           ├───────────────────┤
+           │ +display(x, y)    │
+           └─────────▲─────────┘
+                     │
+       ┌────────────┴─────────────┐
+       │                          │
+┌──────────────┐        ┌───────────────────┐
+│ Character    │        │ FlyweightFactory  │  (Manages Flyweights)
+│ (Concrete)   │        ├───────────────────┤
+├──────────────┤        │ +getCharacter(c)  │
+│ -symbol: char│        └───────────────────┘
+│ +display(x,y)│        
+└──────────────┘  
+```
+
+### Java Implementation
+
+#### Step 1: Flyweight Interface
+```java
+interface CharacterFlyweight {
+    void display(int x, int y);
+}
+```
+
+#### Step 2: Concrete Flyweight Class (Reusable Character Objects)
+```java
+class CharacterConcrete implements CharacterFlyweight {
+    private final char symbol;
+
+    public CharacterConcrete(char symbol) {
+        this.symbol = symbol;
+    }
+
+    @Override
+    public void display(int x, int y) {
+        System.out.println("Character: " + symbol + " displayed at (" + x + ", " + y + ")");
+    }
+}
+```
+
+#### Step 3: Flyweight Factory (Manages Flyweight Objects)
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+class FlyweightFactory {
+    private static final Map<Character, CharacterFlyweight> characterMap = new HashMap<>();
+
+    public static CharacterFlyweight getCharacter(char symbol) {
+        if (!characterMap.containsKey(symbol)) {
+            characterMap.put(symbol, new CharacterConcrete(symbol));
+            System.out.println("Creating new CharacterFlyweight for: " + symbol);
+        }
+        return characterMap.get(symbol);
+    }
+}
+```
+
+#### Step 4: Client Code (Using Flyweight Pattern)
+```java
+public class FlyweightPatternExample {
+    public static void main(String[] args) {
+        String document = "HELLO WORLD";
+
+        int x = 0, y = 0;
+        for (char c : document.toCharArray()) {
+            CharacterFlyweight character = FlyweightFactory.getCharacter(c);
+            character.display(x, y);
+            x += 10; // Move right for next character
+        }
+    }
+}
+```
+
+### When to Use the Flyweight Pattern?
+- When an application needs to create a large number of similar objects.
+- When memory optimization is critical.
+- When objects have intrinsic (shared) and extrinsic (unique) states.
+
+---
+
+## Proxy Pattern
+
+### Overview
+The **Proxy Pattern** is a structural design pattern that provides a placeholder or surrogate for another object. It controls access to the original object, adding extra functionality like lazy initialization, security, logging, or caching without modifying the real object.
+
+### Use Case
+Imagine a bank ATM system where accessing an account requires verification before performing transactions. Instead of allowing direct access to the account, a proxy ensures that authentication is performed before granting access.
+
+### Class Diagram
+```
+               ┌───────────────┐
+               │  BankAccount  │  (Subject Interface)
+               ├───────────────┤
+               │ +withdraw()    │
+               └───────▲───────┘
+                       │
+         ┌─────────────┴─────────────┐
+         │                           │
+ ┌────────────────┐        ┌──────────────────┐
+ │ RealAccount    │        │ AccountProxy     │ (Proxy)
+ │ (Actual Object)│        │ (Controls Access)│
+ ├────────────────┤        ├──────────────────┤
+ │ +withdraw()    │        │ +withdraw()      │
+ └────────────────┘        └──────────────────┘
+```
+
+### Java Implementation
+
+#### Step 1: Subject Interface (BankAccount)
+```java
+interface BankAccount {
+    void withdraw(double amount);
+}
+```
+
+#### Step 2: Real Subject (RealAccount - Actual Bank Account)
+```java
+class RealAccount implements BankAccount {
+    private double balance;
+
+    public RealAccount(double initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        if (amount <= balance) {
+            balance -= amount;
+            System.out.println("Withdrawal of $" + amount + " successful. Remaining balance: $" + balance);
+        } else {
+            System.out.println("Insufficient funds! Current balance: $" + balance);
+        }
+    }
+}
+```
+
+#### Step 3: Proxy Class (AccountProxy - Adds Security Check)
+```java
+class AccountProxy implements BankAccount {
+    private RealAccount realAccount;
+    private String accountHolder;
+
+    public AccountProxy(String accountHolder, double initialBalance) {
+        this.accountHolder = accountHolder;
+        this.realAccount = new RealAccount(initialBalance);
+    }
+
+    private boolean authenticate(String user) {
+        return this.accountHolder.equals(user);
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        String user = "JohnDoe";  // Simulating user input
+        if (authenticate(user)) {
+            System.out.println("Authentication successful for " + user);
+            realAccount.withdraw(amount);
+        } else {
+            System.out.println("Authentication failed! Access denied.");
+        }
+    }
+}
+```
+
+#### Step 4: Test the Implementation
+```java
+public class ProxyPatternExample {
+    public static void main(String[] args) {
+        BankAccount myAccount = new AccountProxy("JohnDoe", 1000.0);
+
+        myAccount.withdraw(200.0);
+        myAccount.withdraw(900.0);  // Should show insufficient funds
+    }
+}
+```
+
+### When to Use the Proxy Pattern?
+- When you need to control access to an object.
+- When adding lazy initialization to avoid expensive object creation.
+- When adding logging, security, or caching without modifying the real object.
+
