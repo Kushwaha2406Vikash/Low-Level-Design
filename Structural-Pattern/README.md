@@ -252,4 +252,7 @@ public class BridgePatternExample {
     }
 }
 ```
-
+#### When to Use the Bridge Pattern?
+- When you need to decouple abstraction and implementation to allow independent variations.
+- When you have multiple orthogonal dimensions of a class hierarchy (e.g., different devices and different remotes).
+- When you want to avoid an explosion of subclasses due to multiple combinations of functionalities.
