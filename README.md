@@ -243,7 +243,7 @@ class RobotWorker implements Workable {
 ---
 
 ## 5. Dependency Inversion Principle (DIP)
-High-level modules should not depend on low-level modules. Both should depend on abstractions.
+High-level modules should not depend on low-level modules. Both should depend on abstractions. Abstractions should not depend on implementation. Implementation should depend on abstraction.
 
 ### Violation of DIP:
 ```java
