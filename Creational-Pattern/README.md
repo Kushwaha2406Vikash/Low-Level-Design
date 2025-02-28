@@ -408,101 +408,137 @@ The **Builder Pattern** is a creational design pattern used to construct complex
 
 ## 2. Builder Pattern Class Diagram
 ```
-        +----------------------+
-        |   Product (Car)      |  
-        +----------------------+
-        | - engine: String     |
-        | - seats: int         |
-        | - GPS: boolean       |
-        +----------------------+
-                  ▲
-                  │
-        +----------------------+
-        |    CarBuilder        |  (Abstract Builder)
-        +----------------------+
-        | + setEngine()        |
-        | + setSeats()         |
-        | + setGPS()           |
-        | + build()            |
-        +----------------------+
-                  ▲
-                  │
-     ---------------------------------
-     |                               |
-+----------------------+     +----------------------+
-|   SportCarBuilder    |     |    SUVCarBuilder    |
-+----------------------+     +----------------------+
+      +--------------------+
+|       User        |
++--------------------+
+| - firstName: String |
+| - lastName: String  |
+| - email: String     |
+| - age: int          |
+| - phoneNumber: String |
+| - address: String    |
++--------------------+
+| + User(builder: UserBuilder) |
+| + toString(): String         |
++--------------------+
+
+           ▲
+           |
+           | Uses (Composition)
+           |
++----------------------+
+|    UserBuilder      |
++----------------------+
+| - firstName: String  |
+| - lastName: String   |
+| - email: String      |
+| - age: int          |
+| - phoneNumber: String |
+| - address: String    |
++----------------------+
+| + UserBuilder(firstName, lastName, email) |
+| + setAge(age: int): UserBuilder           |
+| + setPhoneNumber(phoneNumber: String): UserBuilder |
+| + setAddress(address: String): UserBuilder |
+| + build(): User                            |
++----------------------+
+
 ```
 
 ## 3. Java Implementation of Builder Pattern
+## Step 1: Create the User Class with a Builder
 
-### Step 1: Create the Product Class
-```java
-// Define the Product Class (Immutable Car)
-class Car {
-    private String engine;
-    private int seats;
-    private boolean GPS;
+class User {
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+    private final int age;
+    private final String phoneNumber;
+    private final String address;
 
-    public Car(String engine, int seats, boolean GPS) {
-        this.engine = engine;
-        this.seats = seats;
-        this.GPS = GPS;
+    // Private constructor to enforce the use of the builder
+    private User(UserBuilder builder) {
+        this.firstName = builder.firstName;
+        this.lastName = builder.lastName;
+        this.email = builder.email;
+        this.age = builder.age;
+        this.phoneNumber = builder.phoneNumber;
+        this.address = builder.address;
     }
 
-    public void showSpecifications() {
-        System.out.println("Engine: " + engine + ", Seats: " + seats + ", GPS: " + GPS);
+    @Override
+    public String toString() {
+        return "User [First Name=" + firstName + ", Last Name=" + lastName +
+               ", Email=" + email + ", Age=" + age +
+               ", Phone=" + phoneNumber + ", Address=" + address + "]";
+    }
+
+    // Static Builder Class
+    public static class UserBuilder {
+        private final String firstName;
+        private final String lastName;
+        private final String email;
+        private int age;
+        private String phoneNumber;
+        private String address;
+
+        // Mandatory fields constructor
+        public UserBuilder(String firstName, String lastName, String email) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.email = email;
+        }
+
+        // Optional fields with method chaining
+        public UserBuilder setAge(int age) {
+            this.age = age;
+            return this;
+        }
+
+        public UserBuilder setPhoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public UserBuilder setAddress(String address) {
+            this.address = address;
+            return this;
+        }
+
+        // Build method to create the User instance
+        public User build() {
+            return new User(this);
+        }
     }
 }
-```
 
-### Step 2: Define the Builder Interface
-```java
-// Builder Interface
-interface CarBuilder {
-    CarBuilder setEngine(String engine);
-    CarBuilder setSeats(int seats);
-    CarBuilder setGPS(boolean GPS);
-    Car build();
-}
-```
-
-### Step 3: Implement Concrete Builders
-```java
-// Concrete Builder - Sport Car Builder
-class SportCarBuilder implements CarBuilder {
-    private String engine;
-    private int seats;
-    private boolean GPS;
-
-    public CarBuilder setEngine(String engine) {
-        this.engine = engine;
-        return this;
-    }
-```
-
-### Step 4: Create a Director Class (Optional)
-```java
-// Director Class (Optional)
-class Director {
-    public Car constructSportsCar(CarBuilder builder) {
-        return builder.setEngine("V8").setSeats(2).setGPS(true).build();
-    }
-}
-```
-
-### Step 5: Client Code
-```java
-// Client Code
-public class BuilderPatternDemo {
+## Step 2: Using the Builder Pattern to Create Users
+public class BuilderPatternExample {
     public static void main(String[] args) {
-        Director director = new Director();
-        CarBuilder sportCarBuilder = new SportCarBuilder();
-        Car sportsCar = director.constructSportsCar(sportCarBuilder);
-        sportsCar.showSpecifications();
+        // Creating a user with only mandatory fields
+        User user1 = new User.UserBuilder("John", "Doe", "john.doe@example.com")
+                        .build();
+
+        // Creating a user with optional fields
+        User user2 = new User.UserBuilder("Alice", "Smith", "alice.smith@example.com")
+                        .setAge(28)
+                        .setPhoneNumber("123-456-7890")
+                        .setAddress("123 Main Street, NY")
+                        .build();
+
+        // Creating another user with different optional fields
+        User user3 = new User.UserBuilder("Bob", "Johnson", "bob.johnson@example.com")
+                        .setAge(35)
+                        .setPhoneNumber("987-654-3210")
+                        .build();
+
+        // Print users
+        System.out.println(user1);
+        System.out.println(user2);
+        System.out.println(user3);
     }
 }
-```
+
 
 # Prototype Pattern in Java
 
