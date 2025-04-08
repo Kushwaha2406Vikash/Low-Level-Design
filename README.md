@@ -247,56 +247,71 @@ High-level modules should not depend on low-level modules. Both should depend on
 
 ### Violation of DIP:
 ```java
-class LightBulb {
-    public void turnOn() {
-        System.out.println("LightBulb: On");
-    }
-
-    public void turnOff() {
-        System.out.println("LightBulb: Off");
+class WiredKeyboard {
+    public void connect() {
+        System.out.println("Wired Keyboard connected.");
     }
 }
 
-class Switch {
-    private LightBulb bulb;
+class Computer {
+    private WiredKeyboard keyboard;
 
-    public Switch(LightBulb bulb) {
-        this.bulb = bulb;
+    public Computer() {
+        keyboard = new WiredKeyboard(); // tightly coupled
     }
 
-    public void operate() {
-        bulb.turnOn();
+    public void start() {
+        keyboard.connect();
+        System.out.println("Computer started.");
     }
 }
-```
 
 ### Adhering to DIP:
 ```java
-interface Switchable {
-    void turnOn();
-    void turnOff();
+- Step 1: Define abstraction
+interface Keyboard {
+    void connect();
 }
 
-class LightBulb implements Switchable {
-    @Override
-    public void turnOn() {
-        System.out.println("LightBulb: On");
-    }
+- Step 2: Implement different types of keyboards
 
-    @Override
-    public void turnOff() {
-        System.out.println("LightBulb: Off");
+class WiredKeyboard implements Keyboard {
+    public void connect() {
+        System.out.println("Wired Keyboard connected.");
     }
 }
 
-class Switch {
-    private Switchable device;
-
-    public Switch(Switchable device) {
-        this.device = device;
-    }
-
-    public void operate() {
-        device.turnOn();
+class WirelessKeyboard implements Keyboard {
+    public void connect() {
+        System.out.println("Wireless Keyboard connected via Bluetooth.");
     }
 }
+
+- Step 3: High-level module depends on abstraction
+
+class Computer {
+    private Keyboard keyboard;
+
+    public Computer(Keyboard keyboard) {
+        this.keyboard = keyboard;
+    }
+
+    public void start() {
+        keyboard.connect();
+        System.out.println("Computer started.");
+    }
+}
+
+- Step 4: Use it
+
+public class Main {
+    public static void main(String[] args) {
+        Keyboard myKeyboard = new WirelessKeyboard(); // or new WiredKeyboard()
+        Computer myComputer = new Computer(myKeyboard);
+        myComputer.start();
+    }
+}
+
+
+
+
