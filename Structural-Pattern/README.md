@@ -445,6 +445,25 @@ class HomeTheater {
         this.projector = projector;
         this.soundSystem = soundSystem;
     }
+
+    public void watchMovie() {
+        System.out.println("Get ready to watch a movie...");
+        projector.on();
+        projector.setBrightness();
+        soundSystem.on();
+        soundSystem.setVolume();
+        dvdPlayer.on();
+        dvdPlayer.play();
+    }
+
+    public void endMovie() {
+        System.out.println("Shutting movie theater down...");
+        dvdPlayer.off();
+        soundSystem.off();
+        projector.off();
+    }
+}
+
 ```
 #### Step 3: Test the Implementation
 ```java
